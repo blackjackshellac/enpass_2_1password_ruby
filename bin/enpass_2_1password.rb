@@ -53,6 +53,10 @@ class Enpass_2_1password
 		@logger.info "Running converter"
 		@json=@json_file.read
 		@enpass_data = EnpassData.new(:json=>@json, :logger=>@logger)
+
+		@enpass_data.search_fields
+		puts @enpass_data.labels.inspect
+		puts @enpass_data.types.inspect
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"
 		puts e.backtrace.join("\n")

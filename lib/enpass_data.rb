@@ -16,10 +16,13 @@ class EnpassData
 		:logger=>Logger.create()
 	}
 
-	attr_reader :json, :enpass, :enpassFolders, :enpassItems
+	attr_reader :json, :enpass, :enpassFolders, :enpassItems, :labels, :types
 	def initialize(opts=DEFAULT_OPTS)
 		@json = opts[:json]
 		@logger=opts[:logger]
+		@labels = {}
+		@types = {}
+
 		parse_json
 
 		parse_folders
@@ -43,5 +46,14 @@ class EnpassData
 		@items=@enpass["items"]
 		@logger.info "items is a #{@items.class}"
 		@enpassItems = EnpassItems.new(@items, @logger)
+	end
+
+	def search_fields
+		@enpassItems.items.each { |item|
+			item.fields.each { |itemField|
+				itemField.enumerate_label(@labels)
+				itemField.enumerate_type(@types)
+			}
+		}
 	end
 end

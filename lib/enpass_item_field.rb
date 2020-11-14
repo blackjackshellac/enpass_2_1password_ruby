@@ -15,7 +15,11 @@ class EnpassItemField
 	# },
 	KEYS=%w/label order sensitive type uid updated_at value value_updated_at/
 
-	attr_reader :field, :label, :order, :sensitive, :type, :uid, :updated_at, :value, :value_updated_at
+	# @attr_reader field
+	attr_reader :field
+	# these are the item fields
+	attr_reader :label, :type, :value
+	attr_reader :order, :sensitive, :uid, :updated_at, :value_updated_at
 	def initialize(field)
 		@field=field
 		KEYS.each { |key|
@@ -27,6 +31,22 @@ class EnpassItemField
 
 	def empty?
 		@item.empty?
+	end
+
+	def self.enumerate_value(values, value)
+		unless value.nil?
+			count = (values[value]||0)+1
+			values[value]=count
+		end
+		values
+	end
+
+	def enumerate_label(labels)
+		EnpassItemField.enumerate_value(labels, @label)
+	end
+
+	def enumerate_type(types)
+		EnpassItemField.enumerate_value(types, @type)
 	end
 
 end

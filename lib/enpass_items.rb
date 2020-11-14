@@ -40,17 +40,17 @@ class EnpassItem
 end
 
 ##
-# EnpassItems is an array of EnpassItem objects stored in @items
+# items is an array of EnpassItem objects stored in @items
 #
 class EnpassItems
 	attr_reader :items, :logger
 	def initialize(itemsArray, logger)
 		@logger = logger
 
-		@enpassItems = []
+		@items = []
 		itemsArray.each { |item|
 			enpassItem = EnpassItem.new(item)
-			@enpassItems << enpassItem
+			@items << enpassItem
 			@logger.warn "Unknown folder keys: #{enpassItem.item.keys}" unless enpassItem.empty?
 		}
 
