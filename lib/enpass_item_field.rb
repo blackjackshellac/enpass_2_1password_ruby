@@ -35,8 +35,9 @@ class EnpassItemField
 
 	def self.enumerate_value(values, value)
 		unless value.nil?
-			count = (values[value]||0)+1
-			values[value]=count
+			values[value] = { :count=> 0 } if values[value].nil?
+
+			values[value][:count]+=1
 		end
 		values
 	end

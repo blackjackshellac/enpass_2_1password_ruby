@@ -16,7 +16,8 @@ class EnpassData
 		:logger=>Logger.create()
 	}
 
-	attr_reader :json, :enpass, :enpassFolders, :enpassItems, :labels, :types
+	attr_reader :json, :enpass, :enpassFolders, :enpassItems
+	attr_reader :labels, :types
 	def initialize(opts=DEFAULT_OPTS)
 		@json = opts[:json]
 		@logger=opts[:logger]
@@ -56,4 +57,5 @@ class EnpassData
 			}
 		}
 	end
+
 end
