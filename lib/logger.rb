@@ -36,7 +36,7 @@ class Logger
 	#
 	# @return [Logger] the logger object
 	#
-	def self.create(stream, level=Logger::INFO)
+	def self.create(stream=STDERR, level=Logger::INFO)
 		log = Logger.new(stream)
 		log.level = level
 		log.datetime_format = DATE_FORMAT
