@@ -17,12 +17,13 @@ class EnpassData
 	}
 
 	attr_reader :json, :enpass, :enpassFolders, :enpassItems
-	attr_reader :labels, :types
+	attr_reader :labels, :types, :sortedLabels
 	def initialize(opts=DEFAULT_OPTS)
 		@json = opts[:json]
 		@logger=opts[:logger]
 		@labels = {}
 		@types = {}
+		@sortedLabels = []
 
 		parse_json
 
@@ -49,6 +50,17 @@ class EnpassData
 		@enpassItems = EnpassItems.new(@items, @logger)
 	end
 
+	def sort_labels_by_count(mincount)
+		sorted=@labels.sort_by { |k,v|
+			-v[:count]
+		}
+		@sortedLabels = []
+		sorted.each { |entry|
+			next if entry[1][:count] < mincount
+			@sortedLabels << entry
+		}
+	end
+
 	def enumerate_item_labels
 		@enpassItems.items.each { |item|
 			item.fields.each { |itemField|
@@ -57,12 +69,8 @@ class EnpassData
 		}
 	end
 
-	def print_item_labels(mincount)
-		sorted=@labels.sort_by { |k,v|
-			-v[:count]
-		}
-		sorted.each { |entry|
-			next if entry[1][:count] < mincount
+	def print_item_labels
+		@sortedLabels.each { |entry|
 			@logger.debug "%s: %d [%s (%d)]" % [ entry[0], entry[1][:count], entry[1][:types].join(", "), entry[1][:types].length ]
 		}
 	end

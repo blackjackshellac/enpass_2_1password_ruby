@@ -60,7 +60,8 @@ class Enpass_2_1password
 		@enpass_data = EnpassData.new(:json=>@json, :logger=>@logger)
 
 		@enpass_data.enumerate_item_labels
-		@enpass_data.print_item_labels(@mincount)
+		@enpass_data.sort_labels_by_count(@mincount)
+		@enpass_data.print_item_labels
 
 		@enpass_data.gather_items_csv(@csv)
 
