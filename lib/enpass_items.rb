@@ -15,6 +15,8 @@ class EnpassItem
 
 	KEYS=%w/auto_submit category favorite fields folders icon note subtitle template_type title updated_at uuid/
 
+	OUTPUT_KEYS=%w/title subtitle note uuid/
+	
 	attr_reader :item, :auto_submit, :category, :favorite, :fields, :folders, :icon, :note, :subtitle, :template_type, :title, :updated_at, :uuid
 	def initialize(item)
 		@item = item
@@ -37,6 +39,12 @@ class EnpassItem
 		@item.empty?
 	end
 
+	def search_fields(label)
+		@fields.each { |field|
+			return field if field.is_label(label)
+		}
+		nil
+	end
 end
 
 ##

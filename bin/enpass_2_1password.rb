@@ -15,11 +15,12 @@ class Enpass_2_1password
 	# Directory where the script lives, resolves symlinks
 	MD=File.expand_path(File.dirname(File.realpath($0)))
 
-	attr_reader :logger, :json_file, :json
+	attr_reader :logger, :json_file, :json, :csv
 	def initialize
 			@logger = Logger.create()
 			@json_file = STDIN
 			@mincount = 3
+			@csv = '-'
 	end
 
 	def parse_clargs

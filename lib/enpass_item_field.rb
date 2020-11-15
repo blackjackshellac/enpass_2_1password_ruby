@@ -54,4 +54,7 @@ class EnpassItemField
 		exit 1
 	end
 
+	def is_label(label)
+		@label.eql?(label)
+	end
 end

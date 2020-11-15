@@ -76,6 +76,20 @@ class EnpassData
 	end
 
 	def gather_items_csv(csv)
+		@csv_labels = Array.new(EnpassItem::OUTPUT_KEYS)
+		@sortedLabels.each { |entry|
+			label=entry[0]
+			@csv_labels << label
+			@logger.debug "*"*80
+			@logger.debug "Searching for label #{label}"
+			@enpassItems.items.each { |item|
+				field = item.search_fields(label)
+				next if field.nil?
+				puts field.inspect
+			}
+		}
+
+		puts @csv_labels.inspect
 	end
 
 end
