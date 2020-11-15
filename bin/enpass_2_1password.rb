@@ -54,16 +54,9 @@ class Enpass_2_1password
 		@json=@json_file.read
 		@enpass_data = EnpassData.new(:json=>@json, :logger=>@logger)
 
-		@enpass_data.search_fields
+		@enpass_data.enumerate_item_labels
+		@enpass_data.print_item_labels
 
-		l=@enpass_data.labels.sort_by { |k,v|
-			-v[:count]
-		}
-		t=@enpass_data.types.sort_by { |k,v|
-			-v[:count]
-		}
-		puts JSON.pretty_generate(l)
-		puts JSON.pretty_generate(t)
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"
 		puts e.backtrace.join("\n")

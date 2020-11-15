@@ -33,21 +33,25 @@ class EnpassItemField
 		@item.empty?
 	end
 
-	def self.enumerate_value(values, value)
-		unless value.nil?
-			values[value] = { :count=> 0 } if values[value].nil?
-
-			values[value][:count]+=1
-		end
-		values
-	end
-
 	def enumerate_label(labels)
-		EnpassItemField.enumerate_value(labels, @label)
-	end
+		data=labels[@label]
+		if data.nil?
+			data = {
+				:count => 0,
+				:types => []
+			}
+		end
 
-	def enumerate_type(types)
-		EnpassItemField.enumerate_value(types, @type)
+		data[:count] += 1
+		data[:types] << @type unless data[:types].include?(@type)
+
+		labels[@label] = data
+
+		labels
+	rescue => e
+		puts "#{e}: #{labels[@label]} #{@label} #{@type}"
+		puts e.backtrace.join("\n")
+		exit 1
 	end
 
 end

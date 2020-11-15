@@ -49,12 +49,20 @@ class EnpassData
 		@enpassItems = EnpassItems.new(@items, @logger)
 	end
 
-	def search_fields
+	def enumerate_item_labels
 		@enpassItems.items.each { |item|
 			item.fields.each { |itemField|
 				itemField.enumerate_label(@labels)
-				itemField.enumerate_type(@types)
 			}
+		}
+	end
+
+	def print_item_labels
+		sorted=@labels.sort_by { |k,v|
+			-v[:count]
+		}
+		sorted.each { |entry|
+			puts "%s: %d [%s (%d)]" % [ entry[0], entry[1][:count], entry[1][:types].join(", "), entry[1][:types].length ]
 		}
 	end
 
