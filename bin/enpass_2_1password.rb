@@ -19,6 +19,7 @@ class Enpass_2_1password
 	def initialize
 			@logger = Logger.create()
 			@json_file = STDIN
+			@mincount = 3
 	end
 
 	def parse_clargs
@@ -27,6 +28,10 @@ class Enpass_2_1password
 
 			opts.on('-j', '--json FILE', String, "JSON file path or - to read from STDIN") { |json|
 				@json_file = '-'.eql?(json) ? STDIN : File.open(json, "r")
+			}
+
+			opts.on('-x', '--exclude NUM', Integer, "Exclude field labels with a count lower than this, def is #{@mincount}") { |num|
+				@mincount = num
 			}
 
 			opts.on('-D', '--debug', "Enable debugging output") {
@@ -55,7 +60,7 @@ class Enpass_2_1password
 		@enpass_data = EnpassData.new(:json=>@json, :logger=>@logger)
 
 		@enpass_data.enumerate_item_labels
-		@enpass_data.print_item_labels
+		@enpass_data.print_item_labels(@mincount)
 
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"

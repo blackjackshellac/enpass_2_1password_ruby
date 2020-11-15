@@ -57,11 +57,12 @@ class EnpassData
 		}
 	end
 
-	def print_item_labels
+	def print_item_labels(mincount)
 		sorted=@labels.sort_by { |k,v|
 			-v[:count]
 		}
 		sorted.each { |entry|
+			next if entry[1][:count] < mincount
 			puts "%s: %d [%s (%d)]" % [ entry[0], entry[1][:count], entry[1][:types].join(", "), entry[1][:types].length ]
 		}
 	end
