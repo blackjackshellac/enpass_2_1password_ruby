@@ -62,6 +62,8 @@ class Enpass_2_1password
 		@enpass_data.enumerate_item_labels
 		@enpass_data.print_item_labels(@mincount)
 
+		@enpass_data.gather_items_csv(@csv)
+
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"
 		puts e.backtrace.join("\n")

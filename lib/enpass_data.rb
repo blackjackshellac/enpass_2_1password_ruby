@@ -63,8 +63,11 @@ class EnpassData
 		}
 		sorted.each { |entry|
 			next if entry[1][:count] < mincount
-			puts "%s: %d [%s (%d)]" % [ entry[0], entry[1][:count], entry[1][:types].join(", "), entry[1][:types].length ]
+			@logger.debug "%s: %d [%s (%d)]" % [ entry[0], entry[1][:count], entry[1][:types].join(", "), entry[1][:types].length ]
 		}
+	end
+
+	def gather_items_csv(csv)
 	end
 
 end
