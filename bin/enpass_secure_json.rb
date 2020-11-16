@@ -29,7 +29,7 @@ def secure(hash, key, preserve_length=true)
 	val=hash[key]
 	return false if val.nil? || val.empty?
 	secval=SecureRandom.urlsafe_base64(preserve_length ? val.length : 32)
-	hash[key]="SECURED:#{secval}"
+	hash[key]="SEC:#{key}:#{secval}"
 	true
 end
 
