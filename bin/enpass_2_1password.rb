@@ -20,7 +20,7 @@ class Enpass_2_1password
 			@logger = Logger.create()
 			@json_file = STDIN
 			@mincount = 5
-			@csv = 'test.csv'
+			@csv = 'enpass_2_1password.csv'
 	end
 
 	def parse_clargs
@@ -31,7 +31,11 @@ class Enpass_2_1password
 				@json_file = '-'.eql?(json) ? STDIN : File.open(json, "r")
 			}
 
-			opts.on('-x', '--exclude NUM', Integer, "Exclude labels with a count lower than this, def is #{@mincount}") { |num|
+			opts.on('-c', '--csv FILE', String, "Output file for csv data, def is #{@csv}") { |csv|
+				@csv = csv
+			}
+
+			opts.on('-x', '--exclude NUM', Integer, "Exclude labels with a row count lower than this, def is #{@mincount}") { |num|
 				@mincount = num
 			}
 
@@ -56,6 +60,9 @@ class Enpass_2_1password
 	end
 
 	def run
+
+		exit_code=0
+
 		@logger.info "Running converter"
 		@json=@json_file.read
 		@enpass_data = EnpassData.new(:json=>@json, :logger=>@logger)
@@ -67,10 +74,15 @@ class Enpass_2_1password
 		@enpass_data.gather_items_csv(@mincount)
 		@enpass_data.write_csv(@csv)
 
+	rescue ArgumentError => e
+		@logger.error "#{e.class}: #{e.message}"
+		exit_code=1
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"
 		puts e.backtrace.join("\n")
-		exit 1
+		exit_code=2
+	ensure
+		exit exit_code
 	end
 end
 

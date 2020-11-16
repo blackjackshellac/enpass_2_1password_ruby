@@ -42,13 +42,13 @@ class EnpassData
 
 	def parse_folders
 		@folders=@enpass["folders"]
-		@logger.info "folders is a #{@folders.class}"
+		@logger.debug "folders is a #{@folders.class}"
 		@enpassFolders = EnpassFolders.new(@folders, @logger)
 	end
 
 	def parse_items
 		@items=@enpass["items"]
-		@logger.info "items is a #{@items.class}"
+		@logger.debug "items is a #{@items.class}"
 		@enpassItems = EnpassItems.new(@items, @logger)
 	end
 
@@ -105,9 +105,11 @@ class EnpassData
 			@csv_labels -= exclude
 		end
 
+		@logger.info "csv column labels [#{@csv_labels.join(", ")}]"
 	end
 
 	def write_csv(csv_file)
+		raise ArgumentError, "csv file already exists: #{csv_file}" if File.exist?(csv_file)
 		@logger.info "Writing results to #{csv_file}"
 		CSV.open(csv_file,'w', { :write_headers=> true, :headers => @csv_labels}) {|csv|
 				@enpassItems.items.each { |item|
