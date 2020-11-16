@@ -1,7 +1,10 @@
+## enpass_2_1password_ruby
+
+Convert enpass json format to 1password format suitable for importing.
+
 # bin/enpass_2_1password.rb
 
-Convert enpass json format to 1password format suitable for importing. Use
-the --help option for argument info,
+Use the --help option for argument info,
 
 ```
 $ ./bin/enpass_2_1password.rb -h
@@ -24,9 +27,9 @@ INFO 2020-11-16 14:49:05 -0500: csv column labels [title, subtitle, note, uuid, 
 INFO 2020-11-16 14:49:05 -0500: Writing results to enpass_2_1password.csv
 ```
 
-The output from the script bin/enpass_2_1password.rb can be imported into
+The csv output, enpass_2_1password.csv, can be imported into
 1password.  Fields must still be specified in 1password during the import
-process but it works pretty well.  When testing I imported title, subtitle,
+process but it works well.  When testing I imported title, subtitle,
 note, Password, Username, E-mail, Url. I ignored a few like uuid, and
 Autofill Info.  And created new labels for some of the others.
 
