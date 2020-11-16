@@ -1,6 +1,7 @@
 #
 #
 require 'json'
+require 'csv'
 require_relative '../lib/logger'
 require_relative '../lib/enpass_folders'
 require_relative '../lib/enpass_items'
@@ -75,21 +76,38 @@ class EnpassData
 		}
 	end
 
-	def gather_items_csv(csv)
+	def gather_items_csv(csv_file, mincount)
 		@csv_labels = Array.new(EnpassItem::OUTPUT_KEYS)
 		@sortedLabels.each { |entry|
 			label=entry[0]
 			@csv_labels << label
-			@logger.debug "*"*80
-			@logger.debug "Searching for label #{label}"
-			@enpassItems.items.each { |item|
-				field = item.search_fields(label)
-				next if field.nil?
-				puts field.inspect
-			}
 		}
 
-		puts @csv_labels.inspect
+		empty=[]
+		@csv_labels.each { |label|
+			@logger.debug "*"*80
+			@logger.debug "Searching for values for '#{label}'"
+			cnt=0
+			@enpassItems.items.each { |item|
+				value = item.label_value(label)
+				next if value.empty?
+				cnt += 1
+				@logger.debug value
+			}
+			empty << label if cnt < mincount
+		}
+		@csv_labels -= empty unless empty.empty?
+
+		CSV.open(csv_file,'w', { :write_headers=> true, :headers => @csv_labels}) {|csv|
+				@enpassItems.items.each { |item|
+					row=[]
+					@csv_labels.each { |label|
+						row << item.label_value(label)
+					}
+					csv << row
+				}
+		}
+		#puts @csv_labels.inspect
 	end
 
 end

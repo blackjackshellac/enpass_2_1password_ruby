@@ -20,7 +20,7 @@ class Enpass_2_1password
 			@logger = Logger.create()
 			@json_file = STDIN
 			@mincount = 3
-			@csv = '-'
+			@csv = 'test.csv'
 	end
 
 	def parse_clargs
@@ -64,7 +64,7 @@ class Enpass_2_1password
 		@enpass_data.sort_labels_by_count(@mincount)
 		@enpass_data.print_item_labels
 
-		@enpass_data.gather_items_csv(@csv)
+		@enpass_data.gather_items_csv(@csv, @mincount)
 
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"

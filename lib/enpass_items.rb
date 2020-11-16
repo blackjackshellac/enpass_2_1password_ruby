@@ -16,8 +16,8 @@ class EnpassItem
 	KEYS=%w/auto_submit category favorite fields folders icon note subtitle template_type title updated_at uuid/
 
 	OUTPUT_KEYS=%w/title subtitle note uuid/
-	
-	attr_reader :item, :auto_submit, :category, :favorite, :fields, :folders, :icon, :note, :subtitle, :template_type, :title, :updated_at, :uuid
+
+	attr_reader :item, :auto_submit, :category, :favorite, :fields, :fields_h, :folders, :icon, :note, :subtitle, :template_type, :title, :updated_at, :uuid
 	def initialize(item)
 		@item = item
 		KEYS.each { |key|
@@ -27,11 +27,14 @@ class EnpassItem
 		}
 
 		@fields = [] if @fields.nil?
+		@fields_h = {}
 
 		# fields is an array of EnpassItemField
 		@fields.each_index { |idx|
 			field = @fields[idx]
 			@fields[idx] = EnpassItemField.new(field)
+			label = @fields[idx].label;
+			@fields_h[label] = @fields[idx];
 		}
 	end
 
@@ -40,10 +43,16 @@ class EnpassItem
 	end
 
 	def search_fields(label)
-		@fields.each { |field|
-			return field if field.is_label(label)
-		}
-		nil
+		@fields_h[label]
+	end
+
+	def label_value(label)
+		field = search_fields(label)
+		return field.value unless field.nil?
+		value = instance_variable_get("@#{label}")
+		value.nil? ? "" : value
+	rescue => e
+		""
 	end
 end
 
