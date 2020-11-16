@@ -1,7 +1,20 @@
 # bin/enpass_2_1password.rb
 
-Convert enpass json format to 1password format suitable for importing.
-For example,
+Convert enpass json format to 1password format suitable for importing. Use
+the --help option for argument info,
+
+```
+$ ./bin/enpass_2_1password.rb -h
+
+enpass_2_1password.rb [options]
+    -j, --json FILE                  JSON file path or - to read from STDIN
+    -c, --csv FILE                   Output file for csv data, def is enpass_2_1password.csv
+    -x, --exclude NUM                Exclude labels with a row count lower than this, def is 5
+    -D, --debug                      Enable debugging output
+    -h, --help                       Help
+```
+
+For example, to pipe the output from a gpg encrypted enpass json file,
 
 ```
 $ gpg -d enpass.json.gpg | bin/enpass_2_1password.rb -j - -x 4
