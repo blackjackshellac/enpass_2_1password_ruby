@@ -1,8 +1,15 @@
-## enpass_2_1password_ruby
+# enpass_2_1password_ruby
 
-Convert enpass json format to 1password format suitable for importing.
+Convert enpass json format to 1password csv format suitable for importing to
+1password.  The enpass data format is difficult to easily pass into 1password,
+this can make it a bit easier to get most of one's data across relatively
+easily. A standard ruby installation should be sufficient to run this script but
+I only tested this on ruby 2.7.2.
 
-# bin/enpass_2_1password.rb
+## bin/enpass_2_1password.rb
+
+Convert enpass json format to 1password csv format suitable for importing to
+1password.
 
 Use the --help option for argument info,
 
@@ -36,10 +43,12 @@ Autofill Info.  And created new labels for some of the others.
 I didn't test with totp fields so I'm not sure if that would be problematic,
 I imagine you'd have to setup your totp stuff again in 1password.
 
-# bin/enpass_secure_json.rb
+## bin/enpass_secure_json.rb
 
 Script to obfuscate values stored in an enpass json files, for example,
 
 ```
 gpg -d enpass.json.gpg | ./enpass_secure_json.rb > enpass_obfus.json
 ```
+
+for debugging to prevent unnecessary exposure of my unencrypted enpass data.
