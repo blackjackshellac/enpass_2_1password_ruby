@@ -25,6 +25,7 @@ class EnpassData
 		@labels = {}
 		@types = {}
 		@sortedLabels = []
+		@csv_labels = Array.new(EnpassItem::OUTPUT_KEYS)
 
 		parse_json
 
@@ -76,14 +77,16 @@ class EnpassData
 		}
 	end
 
-	def gather_items_csv(csv_file, mincount)
-		@csv_labels = Array.new(EnpassItem::OUTPUT_KEYS)
+	def gather_items_csv(mincount)
+
+		# add sorted labels values into csv_labels for headers
 		@sortedLabels.each { |entry|
 			label=entry[0]
 			@csv_labels << label
 		}
 
-		empty=[]
+		# look for empty (or too small) columns that don't have at least mincount values
+		exclude=[]
 		@csv_labels.each { |label|
 			@logger.debug "*"*80
 			@logger.debug "Searching for values for '#{label}'"
@@ -94,10 +97,18 @@ class EnpassData
 				cnt += 1
 				@logger.debug value
 			}
-			empty << label if cnt < mincount
+			exclude << label if cnt < mincount
 		}
-		@csv_labels -= empty unless empty.empty?
 
+		unless exclude.empty?
+			@logger.warn "Ignoring results for headers with fewer than #{mincount} results [#{exclude.join(", ")}]"
+			@csv_labels -= exclude
+		end
+
+	end
+
+	def write_csv(csv_file)
+		@logger.info "Writing results to #{csv_file}"
 		CSV.open(csv_file,'w', { :write_headers=> true, :headers => @csv_labels}) {|csv|
 				@enpassItems.items.each { |item|
 					row=[]

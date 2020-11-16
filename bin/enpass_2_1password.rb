@@ -19,7 +19,7 @@ class Enpass_2_1password
 	def initialize
 			@logger = Logger.create()
 			@json_file = STDIN
-			@mincount = 3
+			@mincount = 5
 			@csv = 'test.csv'
 	end
 
@@ -31,7 +31,7 @@ class Enpass_2_1password
 				@json_file = '-'.eql?(json) ? STDIN : File.open(json, "r")
 			}
 
-			opts.on('-x', '--exclude NUM', Integer, "Exclude field labels with a count lower than this, def is #{@mincount}") { |num|
+			opts.on('-x', '--exclude NUM', Integer, "Exclude labels with a count lower than this, def is #{@mincount}") { |num|
 				@mincount = num
 			}
 
@@ -64,7 +64,8 @@ class Enpass_2_1password
 		@enpass_data.sort_labels_by_count(@mincount)
 		@enpass_data.print_item_labels
 
-		@enpass_data.gather_items_csv(@csv, @mincount)
+		@enpass_data.gather_items_csv(@mincount)
+		@enpass_data.write_csv(@csv)
 
 	rescue => e
 		@logger.error "#{e.class}: #{e.message}"
