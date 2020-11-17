@@ -5,11 +5,12 @@
 
 require 'json'
 require 'optparse'
+require 'fileutils'
 require_relative '../lib/logger'
 require_relative '../lib/enpass_data'
 
 class Enpass_2_1password
-	VERSION="0.9"
+	VERSION="0.91"
 	## Process name with extension
 	MERB=File.basename($0)
 	## Process name without .rb extension
@@ -23,6 +24,7 @@ class Enpass_2_1password
 			@json_file = STDIN
 			@mincount = 5
 			@csv = 'enpass_2_1password.csv'
+			@destdir = File.join(File.expand_path('~'), ME)
 	end
 
 	def parse_clargs
@@ -31,6 +33,10 @@ class Enpass_2_1password
 
 			opts.on('-j', '--json FILE', String, "JSON file path or - to read from STDIN") { |json|
 				@json_file = '-'.eql?(json) ? STDIN : File.open(json, "r")
+			}
+
+			opts.on('-d', '--destdir DIR', String, "Destination directory for csv output file, def is #{@destdir}") { |destdir|
+				@destdir = destdir
 			}
 
 			opts.on('-c', '--csv FILE', String, "Output file for csv data, def is #{@csv}") { |csv|
@@ -53,10 +59,16 @@ class Enpass_2_1password
 
 		}
 		optparser.parse!
+
+		FileUtils.mkdir_p @destdir
+		FileUtils.chmod 0700, @destdir
+
 	rescue OptionParser::MissingArgument => e
-		@logger.die e.message
+		@logger.die "#{e.class}: #{e.message}"
+	rescue Errno::EACCES => e
+		@logger.die "#{e.class}: #{e.message}"
 	rescue => e
-		@logger.error e.to_s
+		@logger.error "#{e.class}: #{e.message}"
 		puts e.backtrace.join("\n")
 		exit 1
 	end
@@ -74,7 +86,12 @@ class Enpass_2_1password
 		@enpass_data.print_item_labels
 
 		@enpass_data.gather_items_csv(@mincount)
-		@enpass_data.write_csv(@csv)
+		Dir.chdir(@destdir) {
+			@logger.info "Working in #{@destdir}"
+			umask = File.umask 0077
+			@enpass_data.write_csv(@csv)
+			File.umask umask
+		}
 
 	rescue ArgumentError => e
 		@logger.error "#{e.class}: #{e.message}"
