@@ -9,6 +9,8 @@ require_relative '../lib/logger'
 require_relative '../lib/enpass_data'
 
 class Enpass_2_1password
+	VERSION="0.9"
+	## Process name with extension
 	MERB=File.basename($0)
 	## Process name without .rb extension
 	ME=File.basename($0, ".rb")
@@ -25,7 +27,7 @@ class Enpass_2_1password
 
 	def parse_clargs
 		optparser=OptionParser.new { |opts|
-			opts.banner = "#{MERB} [options]\n"
+			opts.banner = "$ #{MERB} [options]\n"
 
 			opts.on('-j', '--json FILE', String, "JSON file path or - to read from STDIN") { |json|
 				@json_file = '-'.eql?(json) ? STDIN : File.open(json, "r")
@@ -44,7 +46,7 @@ class Enpass_2_1password
 			}
 
 			opts.on('-h', '--help', "Help") {
-				$stdout.puts ""
+				$stdout.puts "#{ME} ver #{VERSION}\n\n"
 				$stdout.puts opts
 				exit 0
 			}
