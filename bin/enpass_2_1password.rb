@@ -24,6 +24,7 @@ class Enpass_2_1password
 			@json_file = STDIN
 			@mincount = 5
 			@csv = 'enpass_2_1password.csv'
+			@gpg = nil
 			@destdir = File.join(File.expand_path('~'), ME)
 	end
 
@@ -41,6 +42,10 @@ class Enpass_2_1password
 
 			opts.on('-c', '--csv FILE', String, "Output file for csv data, def is #{@csv}") { |csv|
 				@csv = csv
+			}
+
+			opts.on('-g', '--gpg [RECIPIENT]', String, "gpg encrypt output csv to optional recipient, def is self") { |recip|
+				@gpg = recip.nil? ? '' : recip
 			}
 
 			opts.on('-x', '--exclude NUM', Integer, "Exclude labels with a row count lower than this, def is #{@mincount}") { |num|
@@ -89,7 +94,11 @@ class Enpass_2_1password
 		Dir.chdir(@destdir) {
 			@logger.info "Working in #{@destdir}"
 			umask = File.umask 0077
-			@enpass_data.write_csv(@csv)
+			if @gpg.nil?
+				@enpass_data.write_csv(@csv)
+			else
+				@enpass_data.pipe_gpg(@csv, @gpg)
+			end
 			File.umask umask
 		}
 

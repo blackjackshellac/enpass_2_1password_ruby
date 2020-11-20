@@ -2,6 +2,8 @@
 #
 require 'json'
 require 'csv'
+require 'open3'
+
 require_relative '../lib/logger'
 require_relative '../lib/enpass_folders'
 require_relative '../lib/enpass_items'
@@ -121,6 +123,49 @@ class EnpassData
 				}
 		}
 		#puts @csv_labels.inspect
+	end
+
+	def pipe_gpg(csv_file, recipient="")
+		gpg="gpg -e -o #{csv_file}.gpg"
+		# encrypt to self by default
+		gpg += " -r #{recipient}" unless recipient.empty?
+		@logger.info "Piping csv to #{gpg}"
+		Open3.popen2e(gpg) do |stdin, stdout_stderr, wait_thread|
+		  Thread.new do
+		    stdout_stderr.each {|l|
+				 puts l
+				 stdout_stderr.flush
+			 }
+		  end
+
+		  # CSV shortcut writes to stdout
+		  CSV(stdin) { |csv|
+			  csv << @csv_labels
+
+			  @enpassItems.items.each { |item|
+				  row=[]
+				  @csv_labels.each { |label|
+					  row << item.label_value(label)
+				  }
+				  csv << row
+			  }
+
+		  }
+
+		  #close the pipe
+		  stdin.close
+
+		  wait_thread.value
+
+		  puts "Results written to #{csv_file}.gpg"
+		end
+	rescue Errno::ENOENT => e
+		$stderr.puts "ERROR: gpg not found: #{gpg}"
+		exit 1
+	rescue => e
+		$stderr.puts "#{e.class}: #{e.message}"
+		puts e.backtrace.join("\n")
+		exit 1
 	end
 
 end

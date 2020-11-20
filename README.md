@@ -15,23 +15,30 @@ Use the --help option for argument info,
 
 ```
 $ ./bin/enpass_2_1password.rb -h
+enpass_2_1password ver 0.91
 
-enpass_2_1password.rb [options]
+$ enpass_2_1password.rb [options]
     -j, --json FILE                  JSON file path or - to read from STDIN
+    -d, --destdir DIR                Destination directory for csv output file, def is /home/steeve/enpass_2_1password
     -c, --csv FILE                   Output file for csv data, def is enpass_2_1password.csv
+    -g, --gpg [RECIPIENT]            gpg encrypt output csv to optional recipient, def is self
     -x, --exclude NUM                Exclude labels with a row count lower than this, def is 5
     -D, --debug                      Enable debugging output
     -h, --help                       Help
-```
-
-For example, to pipe the output from a gpg encrypted enpass json file,
 
 ```
-$ gpg -d enpass.json.gpg | bin/enpass_2_1password.rb -j - -x 4
-INFO 2020-11-16 14:49:05 -0500: Running converter
-WARN 2020-11-16 14:49:05 -0500: Ignoring results for headers with fewer than 4 results [ADDITIONAL DETAILS, Phone number, One-time password, Security question, Security answer, Security type, Auth. method, Port number, Login, Access]
-INFO 2020-11-16 14:49:05 -0500: csv column labels [title, subtitle, note, uuid, Password, Username, E-mail, Url, Website, Autofill Info, last name, first name, postal code]
-INFO 2020-11-16 14:49:05 -0500: Writing results to enpass_2_1password.csv
+
+For example, to pipe the output from a gpg encrypted enpass json file, to a gpg encrypted csv file,
+
+```
+$ gpg -d enpass.json.gpg | bin/enpass_2_1password.rb -g -j -
+INFO 2020-11-20 07:50:16 -0500: Running converter
+WARN 2020-11-20 07:50:16 -0500: Ignoring results for headers with fewer than 5 results [ADDITIONAL DETAILS, Phone number, One-time password, Security question, Security answer, Security type, Auth. method, Port number, Login, Access]
+INFO 2020-11-20 07:50:16 -0500: csv column labels [title, subtitle, note, uuid, Password, Username, E-mail, Url, Website, Autofill Info, last name, first name, postal code]
+INFO 2020-11-20 07:50:16 -0500: Working in /home/steeve/enpass_2_1password
+INFO 2020-11-20 07:50:16 -0500: Piping csv to gpg -e -o enpass_2_1password.csv.gpg
+File 'enpass_2_1password.csv.gpg' exists. Overwrite? (y/N) y
+Results written to enpass_2_1password.csv.gpg
 ```
 
 The csv output, enpass_2_1password.csv, can be imported into
